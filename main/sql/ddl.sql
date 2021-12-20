@@ -124,4 +124,16 @@ alter table pull_request
     add check (
                 project_id = getBranchProject(branch_from_id) and
                 project_id = getBranchProject(branch_to_id)
-        )
+        );
+
+create function getCommentCreatedTime(
+    comment_id integer
+) returns timestamp as
+'
+    select created_at
+    from comment
+    where comment_id = id;
+' language sql;
+
+alter table comment
+    add check (reply_to_id is null or created_at > getCommentCreatedTime(reply_to_id));
