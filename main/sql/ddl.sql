@@ -107,7 +107,7 @@ create table user_project_access
     constraint user_project_access_FK2 foreign key (user_id) references "user" (id)
 );
 
--- pull request from a branch to itself has no sense
+-- a pull request from a branch to itself has no sense
 alter table pull_request
     add check (branch_from_id <> branch_to_id);
 
@@ -137,3 +137,16 @@ create function getCommentCreatedTime(
 
 alter table comment
     add check (reply_to_id is null or created_at > getCommentCreatedTime(reply_to_id));
+
+create function getCommentPullRequest(
+    comment_id integer
+) returns integer as
+'
+    select pull_request_id
+    from comment
+    where comment_id = id;
+' language sql;
+
+alter table comment
+    add check (reply_to_id is null or pull_request_id = getCommentPullRequest(reply_to_id));
+

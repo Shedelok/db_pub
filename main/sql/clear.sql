@@ -11,4 +11,4 @@ drop table if exists branch;
 drop table if exists project;
 drop function if exists getBranchProject;
 drop function if exists getCommentCreatedTime;
-
+drop function if exists getCommentPullRequest;
